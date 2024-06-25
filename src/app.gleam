@@ -52,7 +52,7 @@ pub fn update(model: Model, msg: Msg) -> #(Model, effect.Effect(Msg)) {
 }
 
 fn log_thing(thing: Thing) {
-  io.debug(thing.b)
+  io.debug("b is " <> thing.b)
 }
 
 fn generate_thing_effect() -> effect.Effect(Msg) {

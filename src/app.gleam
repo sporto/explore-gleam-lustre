@@ -1,6 +1,7 @@
 import gleam/dynamic.{type Dynamic}
 import gleam/io
 import gleam/javascript/promise.{type Promise}
+import gleam/result
 import lustre
 import lustre/effect
 import lustre/element
@@ -8,7 +9,7 @@ import lustre/element/html
 import lustre/event
 
 @external(javascript, "./thing.ts", "generateThing")
-fn generate_thing() -> Promise(Result(Thing, Dynamic))
+fn generate_thing() -> Promise(Result(Thing, String))
 
 pub type Thing {
   Thing(a: String, b: String)
@@ -17,7 +18,7 @@ pub type Thing {
 pub type Msg {
   NoOp
   GenerateThing
-  GenerateThingResult(Result(Thing, Dynamic))
+  GenerateThingResult(Result(Thing, String))
 }
 
 pub type Model {
@@ -42,11 +43,16 @@ pub fn update(model: Model, msg: Msg) -> #(Model, effect.Effect(Msg)) {
     GenerateThing -> {
       #(model, generate_thing_effect())
     }
-    GenerateThingResult(thing) -> {
-      io.debug(thing)
+    GenerateThingResult(thing_result) -> {
+      thing_result |> result.map(log_thing)
+      // io.debug(thing == Ok(Thing("a", "b")))
       #(model, effect.none())
     }
   }
+}
+
+fn log_thing(thing: Thing) {
+  io.debug(thing.b)
 }
 
 fn generate_thing_effect() -> effect.Effect(Msg) {

@@ -1,0 +1,8 @@
+*.beam
+*.ez
+/build
+erl_crash.dump
+.flox
+node_modules
+priv
+index.html
